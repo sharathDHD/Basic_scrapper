@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel Scraper</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">Novel Scraper</h1>
+        <form id="fetchForm" class="mb-4">
+            <input type="text" id="url" name="url" placeholder="Enter novel URL" required class="p-2 border rounded">
+            <button type="submit" class="bg-blue-500 text-white p-2 rounded">Fetch Novel</button>
+        </form>
+        <a href="/novels" class="bg-green-500 text-white p-2 rounded">View Stored Novels</a>
+        <div id="message" class="mt-4"></div>
+        <div id = "novel-id" class="mt-4"></div>
+        <div id="fetchedUrls" class="mt-4"></div>
+    </div>
+    <script>
+        const urlInput = document.getElementById('url');
+        urlInput.value = `https://www.69book.io/wanben/10`; // Set the initial value
+        document.getElementById('fetchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fetchedUrls = document.getElementById('fetchedUrls');
+            for(let i = 10; i <= 13400; i++) {
+                const url = `https://www.69book.io/wanben/${i}`;
+                urlInput.value = url; // Update the input box with the current URL
+                const response = await fetch('/fetch', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `url=${encodeURIComponent(url)}`
+                });
+                const result = await response.json();
+                document.getElementById('message').textContent = result.message +" "+result.novel_id || result.error;
+                // Add the fetched URL to the list and display it
+                const p = document.createElement('p');
+                p.textContent = `Fetched: ${url}`;
+                fetchedUrls.appendChild(p);
+            }
+        });
+    </script>
+</body>
+</html>
